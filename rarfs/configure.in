@@ -1,0 +1,37 @@
+#
+#  Copyright (C) 2003-2004  Kent Gustavsson <oden@gmx.net>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+
+AC_INIT(src/main.cc)
+AM_INIT_AUTOMAKE(rarfs,0.0.5)
+AM_CONFIG_HEADER(config.h)
+AC_PROG_CC
+AC_PROG_CXX
+AC_PROG_INSTALL
+AM_PROG_LIBTOOL
+
+dnl Set PACKAGE PREFIX
+if test "x${prefix}" = "xNONE"; then
+  prefix=${ac_default_prefix}
+#else
+#  prefix=${prefix}
+fi
+
+
+AC_OUTPUT(Makefile \
+	src/Makefile \
+)
