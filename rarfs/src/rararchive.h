@@ -41,12 +41,12 @@ class RARArchive
 		RARArchive();
 		~RARArchive();
 		
-		void Init(std::string filename);
+		int Init(std::string filename);
 		std::string GetFileName(int n);
 		void PrintFiles();
 		void PrintFolders();
 		void Parse(bool showcompressed = false);
-		int Read(const char *path, char *buf, size_t size, off_t offset);
+		unsigned int Read(const char *path, char *buf, size_t size, off_t offset);
 		bool HasFile(std::string file);
 		bool HasFolder(std::string f);
 		unsigned long long int GetFileSize(std::string file);

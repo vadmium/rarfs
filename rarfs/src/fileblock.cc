@@ -31,6 +31,9 @@ in(in)
 	unsigned int end = in.tellg();
 	start = end - size - headsize;
 	
+	if  ( end + 21 <= size-headsize )
+		return;
+	
 	in.seekg(end + 21-size-headsize);
 	
 	if ( in.get() == 48 )

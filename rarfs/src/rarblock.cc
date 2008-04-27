@@ -52,7 +52,7 @@ RARBlock::RARBlock(std::istream &in)
 		size = 0;
 	
 	
-	for ( int datalen = headsize - 7; datalen ; datalen -- )
+	for ( int datalen = headsize - 7; datalen > 0 ; datalen -- )
 		in.get();
 	
 	in.seekg(size, std::ios::cur);

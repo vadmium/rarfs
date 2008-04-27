@@ -18,7 +18,7 @@
 INCLUDES = -I..
 bin_PROGRAMS = rarfs
 
-AM_CXXFLAGS = `pkg-config --cflags fuse`
+AM_CXXFLAGS = `pkg-config --cflags fuse` -g -pg
 AM_LDFLAGS = `pkg-config --libs fuse`
 
 rarfs_SOURCES = main.cc \

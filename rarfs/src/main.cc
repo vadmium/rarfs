@@ -191,7 +191,8 @@ int main( int argc, char ** argv)
 	if (fuse_opt_parse(&args, rarfile, rarfs_opts, rarfs_opt_proc) == -1)
 		exit(1);
 				
-	arc.Init(rarfile);
+	if ( ! arc.Init(rarfile) )
+		return -1;
 	
 	rarfs_oper.getattr = rarfs_getattr;
 	rarfs_oper.readdir = rarfs_readdir;

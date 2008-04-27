@@ -1,5 +1,5 @@
 /***************************************************************************
- *  Copyright (C) 2006  Kent Gustavsson <nedo80@gmail.com>
+ *  Copyright (C) 2006-2008  Kent Gustavsson <nedo80@gmail.com>
  ****************************************************************************/
  /*
  *  This program is free software; you can redistribute it and/or modify
@@ -45,20 +45,30 @@ RARArchive::~RARArchive()
 	}
 }
 
-void
+int
 RARArchive::Init(std::string filename)
 {	
 // Hate this part
 	this->filename = filename;
 	
 	archivetype = 0;
+	if ( filename.size() < 5 )
+		archivetype = 5 - archivetype;
+	if ( filename.size() < 4 )
+		return false;
 	while(isdigit(filename[filename.size()-5-archivetype]))
+	{
 		archivetype++;
+		if ( archivetype > 5 )
+			return false;
+	}
 	
-	if ( filename.substr(filename.size() - 4 - archivetype - 4, 4) == "part" )
+	if ( filename.size() > archivetype + 4 + 4 && filename.substr(filename.size() - 4 - archivetype - 4, 4) == "part" )
 		firstfile = atoi( filename.substr(filename.size()-4-archivetype, archivetype).c_str() );
 	else
 		archivetype = 0;
+	
+	return true;
 }
 
 std::string
@@ -135,11 +145,14 @@ RARArchive::Parse(bool showcompressed)
 	{
 		std::ifstream *file = new std::ifstream(GetFileName(n++).c_str());
 		if(!file->good())
-			return
+			return;
 		streams.push_back(file);
 		
 		for(;;)
 		{	
+			if(!file->good())
+				return;
+			
 			char buf[4];
 			file->read(buf,3);
 			file->seekg (-3, std::ios::cur);
@@ -176,10 +189,12 @@ RARArchive::Parse(bool showcompressed)
 					
 					blocks.push_back( f );
 					file->seekg (-4, std::ios::cur);
+					
 					break;
 				default:
 					blocks.push_back( new RARBlock(*file) );
 			}
+		
 			if ( buf[2] == 0 ||  buf[2] == 0x7B)
 				break;
 		}
@@ -187,7 +202,7 @@ RARArchive::Parse(bool showcompressed)
 
 }
 
-int
+unsigned int
 RARArchive::Read(const char *path, char *buf, size_t size, off_t offset)
 {
 	unsigned int pos = 0;
