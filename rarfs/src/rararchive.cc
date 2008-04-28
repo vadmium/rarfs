@@ -195,7 +195,7 @@ RARArchive::Parse(bool showcompressed)
 					blocks.push_back( new RARBlock(*file) );
 			}
 		
-			if ( buf[2] == 0 ||  buf[2] == 0x7B)
+			if ( buf[2] == 0 || buf[2] == 0x7B || buf[2] == 0x78 )
 				break;
 		}
 	}
