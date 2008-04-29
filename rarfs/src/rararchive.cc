@@ -151,7 +151,7 @@ RARArchive::Parse(bool showcompressed)
 		for(;;)
 		{	
 			if(!file->good())
-				return;
+				break;
 			
 			char buf[4];
 			file->read(buf,3);
@@ -196,8 +196,13 @@ RARArchive::Parse(bool showcompressed)
 			}
 		
 			if ( buf[2] == 0 || buf[2] == 0x7B || buf[2] == 0x78 )
+			{
+				
 				break;
+			}
 		}
+		file->clear();
+		file->seekg(0);
 	}
 
 }

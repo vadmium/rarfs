@@ -104,7 +104,7 @@ FileBlock::GetData(char *buf, unsigned int offset, unsigned int len)
 		return 0;
 	if ( offset + len > size )
 		len = size - offset;
-		
+	
 	in.read(buf, len);
 	in.seekg(old);
 	
