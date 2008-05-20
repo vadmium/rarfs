@@ -52,10 +52,12 @@ class RARArchive
 		unsigned long long int GetFileSize(std::string file);
 		std::vector < std::string > GetFiles();
 		std::vector < std::string > GetFolders();
+		time_t GetDate(std::string file);
 	protected:
 		std::string filename;
 		int firstfile;
 		int archivetype;
+		int default_date;
 		std::vector<RARBlock *> blocks;
 		std::map<std::string, std::vector<FileBlock *> > fileblocks;
 		std::map<std::string, std::vector<FileBlock *> > folderblocks;

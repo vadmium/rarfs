@@ -28,10 +28,13 @@
 #include "rararchive.h"
 #include <fstream>
 #include <sstream>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 RARArchive::RARArchive()
 {
-
+	default_date = 0;
 }
 
 
@@ -48,6 +51,10 @@ RARArchive::~RARArchive()
 int
 RARArchive::Init(std::string filename)
 {	
+	struct stat st;
+	stat(filename.c_str(), &st);
+	default_date = st.st_mtime;
+	
 // Hate this part
 	this->filename = filename;
 	
@@ -140,7 +147,6 @@ void
 RARArchive::Parse(bool showcompressed)
 {
 	int n = 0;
-	
 	for(;;)
 	{
 		std::ifstream *file = new std::ifstream(GetFileName(n++).c_str());
@@ -279,6 +285,20 @@ RARArchive::PrintFiles()
 			
 		std::cout << iter->first << " blocks: " << iter->second.size() << " size: " << s << std::endl;
 	}
+}
+
+time_t
+RARArchive::GetDate(std::string file)
+{
+	time_t date = 0;
+	if( fileblocks.find(file) == fileblocks.end() )
+		return default_date;
+
+	std::vector <FileBlock *>::iterator i;
+	i = fileblocks[file].begin();
+	date =(*i)->GetFileDate();
+
+	return date;
 }
 
 void

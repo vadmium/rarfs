@@ -25,17 +25,48 @@
 #include "fileblock.h"
 #include "main.h"
 
+/* MS-DOS time/date conversion routines derived from: */
+
+/*
+ *  linux/fs/msdos/misc.c
+ *
+ *  Written 1992,1993 by Werner Almesberger
+ */
+
+/* Convert a MS-DOS time/date pair to a UNIX date (seconds since 1 1 70). */
+
+/* Linear day numbers of the respective 1sts in non-leap years. */
+static int day_n[] = { 0,31,59,90,120,151,181,212,243,273,304,334,0,0,0,0 };
+int date_dos2unix(unsigned short time,unsigned short date)
+{
+       int month,year,secs;
+
+       month = ((date >> 5) & 15)-1;
+       year = date >> 9;
+       secs = (time & 31)*2+60*((time >> 5) & 63)+(time >> 11)*3600+86400*
+           ((date & 31)-1+day_n[month]+(year/4)+year*365-((year & 3) == 0 &&
+           month < 2 ? 1 : 0)+3653)-7200;   // the code seems to be 2 hours off always -> -7200
+                       /* days since 1.1.70 plus 80's leap day */
+       return secs;
+}
+
 FileBlock::FileBlock(std::istream &in) : RARBlock(in),
 in(in)
 {
 	unsigned int end = in.tellg();
 	start = end - size - headsize;
-	
-	if  ( end + 21 <= size-headsize )
-		return;
-	
+
+	in.seekg(end + 16-size-headsize);
+	unsigned short time;
+	unsigned short date;
+	time = in.get();
+	time += in.get() *256;
+	date = in.get();
+	date += in.get() *256;
+	filedate=date_dos2unix(time,date);
+
 	in.seekg(end + 21-size-headsize);
-	
+
 	if ( in.get() == 48 )
 		compressed = false;
 	else
@@ -63,6 +94,11 @@ in(in)
 		folder = false;
 }
 
+time_t
+FileBlock::GetFileDate()
+{
+       return filedate;
+}
 
 FileBlock::~FileBlock()
 {
