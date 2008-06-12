@@ -24,6 +24,9 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <fuse_opt.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <cstdlib>
 
 #include <iostream>
 #include <fstream>
@@ -198,7 +201,10 @@ int main( int argc, char ** argv)
 		exit(1);
 				
 	if ( ! arc.Init(rarfile) )
-		return -1;
+	{
+		printf("USAGE: %s <file> <dir>\n", argv[0]);
+ 		return -1;
+	}
 	
 	rarfs_oper.getattr = rarfs_getattr;
 	rarfs_oper.readdir = rarfs_readdir;

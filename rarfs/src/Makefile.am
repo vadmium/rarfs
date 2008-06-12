@@ -1,5 +1,5 @@
 #
-#  Copyright (C) 2003-2004  Kent Gustavsson <oden@gmx.net>
+#  Copyright (C) 2003-2008  Kent Gustavsson <nedo80@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 INCLUDES = -I..
 bin_PROGRAMS = rarfs
 
-AM_CXXFLAGS = `pkg-config --cflags fuse` -g -pg
+AM_CXXFLAGS = `pkg-config --cflags fuse` 
 AM_LDFLAGS = `pkg-config --libs fuse`
 
 rarfs_SOURCES = main.cc \
