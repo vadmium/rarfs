@@ -163,6 +163,13 @@ RARArchive::Parse(bool showcompressed)
 			
 			char buf[4];
 			file->read(buf,3);
+			//for some rar files there are seeks past file end, then directly to file end
+			//which makes file->good() return true, but there is nothing to read
+			//so with file->gcount() we check if we actually read something
+			//otherwise we use old bufer and crash somewhere
+			if(file->gcount()==0)
+				break;
+
 			file->seekg (-3, std::ios::cur);
 			
 			switch( buf[2] )
