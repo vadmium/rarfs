@@ -1,0 +1,51 @@
+#!/usr/bin/env python
+
+import os
+import sys
+
+
+t = sys.argv[1:]
+
+
+temp_folder = '/tmp/rarfstmp'
+
+def play_rar_arhchive(archive, options=""):
+	os.system("mkdir " + temp_folder)
+	os.system("fusermount -u " + temp_folder)
+	os.system("rarfs \"" + archive + "\" " + temp_folder)
+	os.system("find " + temp_folder + " | xargs -n 1 mplayer -cache-min 0 -cache 8000 -fs " + options)
+	os.system("fusermount -u " + temp_folder)
+	os.system("rmdir " + temp_folder)
+
+
+def find_rar_archive(path):
+	ret = []
+	for x in os.listdir(path):
+		if ( os.path.isdir(os.path.join(path,x)) ):
+			ret += find_rar_archive(os.path.join(path,x))
+		else:
+			if ( x.endswith(".rar") ):
+				if ( x[-11:-6] == ".part" ):
+					if ( x[-11:] == ".part01.rar" ):
+						ret += [os.path.join(path,x)]
+				elif ( x[-12:-7] == ".part" ):
+					if ( x[-11:] == ".part001.rar" ):
+						ret += [os.path.join(path,x)]
+				elif ( x[-13:-8] == ".part" ):
+					if ( x[-11:] == ".part0001.rar" ):
+						ret += [os.path.join(path,x)]
+				else:
+					ret += [os.path.join(path,x)]
+	return ret
+
+rars = []
+for n in t:
+	rars += find_rar_archive(os.path.join(os.path.abspath(os.curdir),n))
+os.chdir(os.environ.get('HOME'))
+
+rars.sort()
+	
+for x in rars:
+	print "playing ", x
+	play_rar_arhchive(x)
+
