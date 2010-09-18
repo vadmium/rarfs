@@ -17,7 +17,7 @@
 
 
 AC_INIT(src/main.cc)
-AM_INIT_AUTOMAKE(rarfs,0.0.9)
+AM_INIT_AUTOMAKE(rarfs,0.0.10)
 AM_CONFIG_HEADER(config.h)
 AC_PROG_CC
 AC_PROG_CXX
