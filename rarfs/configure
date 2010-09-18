@@ -2666,7 +2666,7 @@ fi
 
 # Define the identity of the package.
  PACKAGE=rarfs
- VERSION=0.0.9
+ VERSION=0.0.9-r1
 
 
 cat >>confdefs.h <<_ACEOF
