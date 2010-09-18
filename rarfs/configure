@@ -2666,7 +2666,7 @@ fi
 
 # Define the identity of the package.
  PACKAGE=rarfs
- VERSION=0.0.8
+ VERSION=0.0.9
 
 
 cat >>confdefs.h <<_ACEOF
@@ -13979,7 +13979,7 @@ if test "x${prefix}" = "xNONE"; then
 fi
 
 
-ac_config_files="$ac_config_files Makefile src/Makefile doc/Makefile"
+ac_config_files="$ac_config_files Makefile src/Makefile doc/Makefile scripts/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -15068,6 +15068,7 @@ do
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
     "doc/Makefile") CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
+    "scripts/Makefile") CONFIG_FILES="$CONFIG_FILES scripts/Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac
