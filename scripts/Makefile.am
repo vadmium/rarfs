@@ -1,1 +1,3 @@
-bin_SCRIPTS = prarfs
+dist_bin_SCRIPTS = prarfs
+
+
