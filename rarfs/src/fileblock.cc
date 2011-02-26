@@ -24,6 +24,7 @@
 
 #include "fileblock.h"
 #include "main.h"
+#include <time.h>
 
 /* MS-DOS time/date conversion routines derived from: */
 
@@ -33,21 +34,20 @@
  *  Written 1992,1993 by Werner Almesberger
  */
 
-/* Convert a MS-DOS time/date pair to a UNIX date (seconds since 1 1 70). */
+/* Convert a MS-DOS time/date pair (unspecified local time zones) to a UNIX
+time_t. */
 
-/* Linear day numbers of the respective 1sts in non-leap years. */
-static int day_n[] = { 0,31,59,90,120,151,181,212,243,273,304,334,0,0,0,0 };
-int date_dos2unix(unsigned short time,unsigned short date)
+time_t date_dos2unix(unsigned short time,unsigned short date)
 {
-       int month,year,secs;
-
-       month = ((date >> 5) & 15)-1;
-       year = date >> 9;
-       secs = (time & 31)*2+60*((time >> 5) & 63)+(time >> 11)*3600+86400*
-           ((date & 31)-1+day_n[month]+(year/4)+year*365-((year & 3) == 0 &&
-           month < 2 ? 1 : 0)+3653)-7200;   // the code seems to be 2 hours off always -> -7200
-                       /* days since 1.1.70 plus 80's leap day */
-       return secs;
+       struct tm tm;
+       tm.tm_year = 1980 + (date >> 9) - 1900,
+       tm.tm_mon = ((date >> 5) & 15) - 1,
+       tm.tm_mday = date & 31,
+       tm.tm_hour = time >> 11,
+       tm.tm_min = (time >> 5) & 63,
+       tm.tm_sec = (time & 31)*2,
+       tm.tm_isdst = -1; /* unknown; mktime will guess */
+       return mktime(&tm);
 }
 
 FileBlock::FileBlock(std::istream &in) : RARBlock(in),
