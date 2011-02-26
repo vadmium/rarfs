@@ -61,22 +61,26 @@ RARArchive::Init(std::string filename)
 // Hate this part
 	this->filename = filename;
 	
-	archivetype = 0;
-	if ( filename.size() < 5 )
-		archivetype = 5 - archivetype;
-	if ( filename.size() < 4 )
+	voldigits = 0;
+	if ( filename.size() < extsize )
 		return false;
-	while(isdigit(filename[filename.size()-5-archivetype]))
+	while(voldigits+extsize < filename.size() &&
+	isdigit(filename[filename.size()-extsize-voldigits-1]))
 	{
-		archivetype++;
-		if ( archivetype > 5 )
+		voldigits++;
+		if ( voldigits > 5 )
 			return false;
 	}
 	
-	if ( filename.size() > archivetype + 4 + 4 && filename.substr(filename.size() - 4 - archivetype - 4, 4) == "part" )
-		firstfile = atoi( filename.substr(filename.size()-4-archivetype, archivetype).c_str() );
+	const int partsize = 4; /* "part".size() */
+	if ( filename.size() > partsize + voldigits + extsize &&
+	filename.substr(filename.size() - extsize - voldigits - partsize,
+	partsize) == "part" )
+		firstfile = atoi( filename.substr(
+			filename.size()-extsize-voldigits, voldigits).
+			c_str() );
 	else
-		archivetype = 0;
+		voldigits = 0;
 	
 	return true;
 }
@@ -89,8 +93,9 @@ RARArchive::GetFileName(int n)
 		
 	std::stringstream f;
 
-	if ( archivetype == 0 )
+	if ( voldigits == 0 )
 	{
+		/* n=0 => .rar (see above), n=1 => .r00, n=2 => .r01, etc */
 		if( n-1 < 10 )
 			f << filename.substr(0,filename.size()-2) << 0 << n-1;
 		else
@@ -100,10 +105,10 @@ RARArchive::GetFileName(int n)
 	{
 		char prev;
 		
-		f << filename.substr(0,filename.size()-4-archivetype);
+		f << filename_prefix;
 		
 		prev = f.fill ('0');
-		f.width (archivetype);
+		f.width (voldigits);
 		f << n + firstfile;
 		f.fill(prev);
 		f.width(0);
