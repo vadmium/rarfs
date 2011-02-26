@@ -48,6 +48,7 @@ class FileBlock : public RARBlock
 		bool folder;
 		bool compressed;
 		time_t filedate;
+		void ParseXtime();
 };
 
 

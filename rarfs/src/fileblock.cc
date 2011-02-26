@@ -25,6 +25,7 @@
 #include "fileblock.h"
 #include "main.h"
 #include <time.h>
+#include <ios>
 
 /* MS-DOS time/date conversion routines derived from: */
 
@@ -86,12 +87,63 @@ in(in)
 	in.read(m, filenamesize);
 	m[filenamesize] = 0;
 	filename = m;
+	
+	if ( flags & 0x0400 ) /* Salt field present */
+	{
+		in.seekg(min(in.tellg() + std::streamoff(8),
+			std::streampos(start + headsize)));
+	}
+	
+	/* Extended time stamp field present */
+	if ( flags & 0x1000 &&
+	in.tellg() + std::streamoff(2) <= start + headsize )
+	{
+		ParseXtime();
+	}
+	
 	in.seekg(end);
 	
 	if ( ( flags & 0xE0 ) == 0xE0 )
 		folder = true;
 	else
 		folder = false;
+}
+
+/* Derived from _parse_ext_time function in "rarfile" Python module.
+http://rarfile.berlios.de/ */
+void
+FileBlock::ParseXtime()
+{
+	unsigned int flags = in.get();
+	flags += in.get() * 256;
+	int field = 4;
+	
+	--field;
+	unsigned int field_flags = flags >> field * 4 & 0xF;
+	
+	unsigned long frac = 0; /* 100 ns units; 24 bits */
+	if ( field_flags & 8 ) /* mtime field present */
+	{
+		filedate += field_flags >> 2 & 1;
+		
+		for ( unsigned int i = 0; i < (field_flags & 3); ++i )
+		{
+			frac >>= 8;
+			frac += in.get() << 16;
+		}
+	}
+	/* Add frac * 100 nanoseconds to timestamp */
+	
+	/* Not interested in the three other time fields */
+	while ( field > 0 )
+	{
+		--field;
+		field_flags = flags >> field * 4 & 0xF;
+		if ( 0 != (field_flags & 8) )
+		{
+			in.seekg(field_flags & 3, std::ios::cur);
+		}
+	}
 }
 
 time_t
