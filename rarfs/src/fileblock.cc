@@ -64,7 +64,7 @@ in(in)
 	time += in.get() *256;
 	date = in.get();
 	date += in.get() *256;
-	filedate=date_dos2unix(time,date);
+	filedate.tv_sec=date_dos2unix(time,date);
 
 	in.seekg(end + 25-size-headsize);
 
@@ -124,7 +124,7 @@ FileBlock::ParseXtime()
 	unsigned long frac = 0; /* 100 ns units; 24 bits */
 	if ( field_flags & 8 ) /* mtime field present */
 	{
-		filedate += field_flags >> 2 & 1;
+		filedate.tv_sec += field_flags >> 2 & 1;
 		
 		for ( unsigned int i = 0; i < (field_flags & 3); ++i )
 		{
@@ -132,7 +132,7 @@ FileBlock::ParseXtime()
 			frac += in.get() << 16;
 		}
 	}
-	/* Add frac * 100 nanoseconds to timestamp */
+	filedate.tv_nsec = frac * 100;
 	
 	/* Not interested in the three other time fields */
 	while ( field > 0 )
@@ -146,10 +146,11 @@ FileBlock::ParseXtime()
 	}
 }
 
-time_t
-FileBlock::GetFileDate()
+void
+FileBlock::GetFileDate(struct timespec* tp)
 {
-       return filedate;
+       tp->tv_sec = filedate.tv_sec;
+       tp->tv_nsec = filedate.tv_nsec;
 }
 
 FileBlock::~FileBlock()

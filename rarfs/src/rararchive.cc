@@ -33,6 +33,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <cstdlib>
+#include <time.h>
 
 RARArchive::RARArchive()
 {
@@ -295,18 +296,19 @@ RARArchive::PrintFiles()
 	}
 }
 
-time_t
-RARArchive::GetDate(std::string file)
+void
+RARArchive::GetDate(std::string file, struct timespec* tp)
 {
-	time_t date = 0;
 	if( fileblocks.find(file) == fileblocks.end() )
-		return default_date;
+	{
+		tp->tv_sec = default_date;
+		tp->tv_nsec = 0;
+		return;
+	}
 
 	std::vector <FileBlock *>::iterator i;
 	i = fileblocks[file].begin();
-	date =(*i)->GetFileDate();
-
-	return date;
+	(*i)->GetFileDate(tp);
 }
 
 void

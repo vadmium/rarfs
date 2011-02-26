@@ -50,23 +50,23 @@ static int rarfs_getattr(const char *p, struct stat *stbuf)
 		stbuf->st_mode = S_IFDIR | 0755;
 		stbuf->st_nlink = 2;
 		
-		stbuf->st_atime = arc.GetDate(path);
-		stbuf->st_mtime = arc.GetDate(path);
+		arc.GetDate(path, &stbuf->st_atim);
+		arc.GetDate(path, &stbuf->st_mtim);
 	}
 	else if(arc.HasFolder(path))
 	{
 		stbuf->st_mode = S_IFDIR | 0755;
 		stbuf->st_nlink = 2;
-		stbuf->st_atime = arc.GetDate(path);
-		stbuf->st_mtime = arc.GetDate(path);
+		arc.GetDate(path, &stbuf->st_atim);
+		arc.GetDate(path, &stbuf->st_mtim);
 	}
 	else if(arc.HasFile(path)) 
 	{
 		stbuf->st_mode = S_IFREG | 0444;
 		stbuf->st_nlink = 1;
 		stbuf->st_size = arc.GetFileSize(path);
-		stbuf->st_atime = arc.GetDate(path);
-		stbuf->st_mtime = arc.GetDate(path);
+		arc.GetDate(path, &stbuf->st_atim);
+		arc.GetDate(path, &stbuf->st_mtim);
 	}
 	else
 		res = -ENOENT;

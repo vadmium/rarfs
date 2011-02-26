@@ -28,6 +28,7 @@
 #define _FILEBLOCK_H_
 
 #include "rarblock.h"
+#include <time.h>
 
 class FileBlock : public RARBlock
 {
@@ -36,7 +37,7 @@ class FileBlock : public RARBlock
 		 ~FileBlock();
 	
 		std::string GetFileName();
-		time_t GetFileDate();
+		void GetFileDate(struct timespec* tp);
 		unsigned int GetDataSize();
 		int GetData(char *buf, unsigned int offset, unsigned int len);
 		bool isFolder();
@@ -47,7 +48,7 @@ class FileBlock : public RARBlock
 		std::istream &in;
 		bool folder;
 		bool compressed;
-		time_t filedate;
+		struct timespec filedate;
 		void ParseXtime();
 };
 

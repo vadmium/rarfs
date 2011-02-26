@@ -34,6 +34,7 @@
 #include "fileblock.h"
 #include "markerblock.h"
 #include "archiveblock.h"
+#include <time.h>
 
 class RARArchive
 {
@@ -52,7 +53,7 @@ class RARArchive
 		unsigned long long int GetFileSize(std::string file);
 		std::vector < std::string > GetFiles();
 		std::vector < std::string > GetFolders();
-		time_t GetDate(std::string file);
+		void GetDate(std::string file, struct timespec* tp);
 	protected:
 		std::string filename;
 		int firstfile;
