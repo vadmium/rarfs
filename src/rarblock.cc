@@ -141,6 +141,6 @@ RARBlock::print()
 		
 		}
 	}
-	std::cout << "Size: " << headsize << std::endl;
-	std::cout << "DataSize: " << size << std::endl;
+	std::cout << "Size: 0x" << headsize << std::endl;
+	std::cout << "DataSize: 0x" << size << std::endl;
 }	
