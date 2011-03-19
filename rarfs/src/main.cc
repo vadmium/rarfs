@@ -185,9 +185,9 @@ static int rarfs_opt_proc(void *data, const char *arg, int key,
 				strcpy(tmp, arg);
 				return 0;
 			}
-			return 1;		
 	}
-		
+	
+	return 1;
 }
 
 int main( int argc, char ** argv)
