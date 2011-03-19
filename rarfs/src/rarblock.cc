@@ -47,15 +47,13 @@ RARBlock::RARBlock(std::istream &in)
 		size += in.get() * 256;
 		size += in.get() * 256 * 256;
 		size += in.get() * 256 * 256 * 256;
+		in.seekg(headsize - 7 - 4 + size, std::ios::cur);
 	}
 	else
+	{
 		size = 0;
-	
-	
-	for ( int datalen = headsize - 7; datalen > 0 ; datalen -- )
-		in.get();
-	
-	in.seekg(size, std::ios::cur);
+		in.seekg(headsize - 7, std::ios::cur);
+	}
 }
 
 RARBlock::~RARBlock()

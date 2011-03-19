@@ -56,7 +56,7 @@ in(in)
 	unsigned int end = in.tellg();
 	start = end - size - headsize;
 
-	in.seekg(end + 16-size-headsize);
+	in.seekg(end + 20-size-headsize);
 	unsigned short time;
 	unsigned short date;
 	time = in.get();
@@ -65,7 +65,7 @@ in(in)
 	date += in.get() *256;
 	filedate=date_dos2unix(time,date);
 
-	in.seekg(end + 21-size-headsize);
+	in.seekg(end + 25-size-headsize);
 
 	if ( in.get() == 48 )
 		compressed = false;
@@ -134,7 +134,7 @@ FileBlock::GetData(char *buf, unsigned int offset, unsigned int len)
 {
 	std::streampos old = in.tellg();
 
-	in.seekg(start + headsize + offset -4);
+	in.seekg(start + headsize + offset);
 	
 	if ( offset > size || !len) 
 		return 0;

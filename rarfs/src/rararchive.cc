@@ -203,7 +203,6 @@ RARArchive::Parse(bool showcompressed)
 					}
 					
 					blocks.push_back( f );
-					file->seekg (-4, std::ios::cur);
 					
 					break;
 				default:
