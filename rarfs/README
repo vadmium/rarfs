@@ -1,0 +1,6 @@
+To do a simple build, use these commands:
+
+autoreconf  # Generates configure script and Makefile.in files
+./configure
+make
+make install
