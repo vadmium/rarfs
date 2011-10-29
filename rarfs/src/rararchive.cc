@@ -61,24 +61,48 @@ RARArchive::Init(std::string filename)
 // Hate this part
 	this->filename = filename;
 	
+	volsuffix = ".rar";
 	voldigits = 0;
-	if ( filename.size() < extsize )
-		return false;
-	while(voldigits+extsize < filename.size() &&
-	isdigit(filename[filename.size()-extsize-voldigits-1]))
+	std::string numprefix;
+	std::size_t offset;
+	
+	offset = volsuffix.size();
+	if ( offset <= filename.size() &&
+	filename.substr(filename.size()-offset) == volsuffix )
 	{
+		/* Ends in ".rar"; check for "part<N>.rar" */
+		numprefix = "part";
+	}
+	else
+	{
+		/* Try ".<N>" */
+		volsuffix = "";
+		numprefix = ".";
+	}
+	
+	while(true)
+	{
+		offset = voldigits+volsuffix.size();
+		if ( offset >= filename.size() ||
+		!isdigit(filename[filename.size()-offset-1]))
+		{
+			break;
+		}
+		
 		voldigits++;
 		if ( voldigits > 5 )
 			return false;
 	}
 	
-	const int partsize = 4; /* "part".size() */
-	if ( filename.size() > partsize + voldigits + extsize &&
-	filename.substr(filename.size() - extsize - voldigits - partsize,
-	partsize) == "part" )
+	offset = numprefix.size() + voldigits + volsuffix.size();
+	if ( offset <= filename.size() && filename.substr(
+	filename.size() - offset, numprefix.size()) == numprefix )
+	{
+		offset = volsuffix.size()+voldigits;
+		volprefix = filename.substr(0, filename.size()-offset);
 		firstfile = atoi( filename.substr(
-			filename.size()-extsize-voldigits, voldigits).
-			c_str() );
+			filename.size()-offset, voldigits).c_str() );
+	}
 	else
 		voldigits = 0;
 	
@@ -105,14 +129,15 @@ RARArchive::GetFileName(int n)
 	{
 		char prev;
 		
-		f << filename_prefix;
+		f << volprefix;
 		
 		prev = f.fill ('0');
 		f.width (voldigits);
 		f << n + firstfile;
 		f.fill(prev);
 		f.width(0);
-		f << ".rar";
+		
+		f << volsuffix;
 	}
 		
 	return f.str();

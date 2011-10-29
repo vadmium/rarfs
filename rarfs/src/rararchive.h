@@ -55,14 +55,15 @@ class RARArchive
 		std::vector < std::string > GetFolders();
 		void GetDate(std::string file, struct timespec* tp);
 	protected:
-		static const int extsize = 4; /* ".rar".size() */
-		
 		std::string filename;
 		int firstfile;
 		
 		/* Number of digits used in volume naming scheme
 		0 => .rar, .r00, .r01, etc extension scheme used instead. */
 		int voldigits;
+		
+		std::string volprefix;
+		std::string volsuffix;
 		
 		int default_date;
 		std::vector<RARBlock *> blocks;
