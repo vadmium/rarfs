@@ -1,6 +1,8 @@
 To do a simple build, use these commands:
 
-autoreconf  # Generates configure script and Makefile.in files
+# Generates configure script and Makefile.in files; copy ltmain.sh
+autoreconf --verbose --install
+
 ./configure
 make
 make install
