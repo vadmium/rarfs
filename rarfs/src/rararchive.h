@@ -35,6 +35,7 @@
 #include "markerblock.h"
 #include "archiveblock.h"
 #include <time.h>
+#include <sys/types.h>
 
 class RARArchive
 {
