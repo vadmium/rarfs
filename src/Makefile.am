@@ -31,5 +31,4 @@ rarfs_SOURCES = main.cc \
 	archiveblock.h                   \
 	archiveblock.cc                   \
 	fileblock.h                   \
-	fileblock.cc                   \
-	main.h 
+	fileblock.cc

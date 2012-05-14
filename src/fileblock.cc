@@ -23,7 +23,6 @@
 //
 
 #include "fileblock.h"
-#include "main.h"
 #include <time.h>
 #include <ios>
 
@@ -79,10 +78,8 @@ in(in)
 	in.seekg(4, std::ios::cur);
 	char m[filenamesize+1];
 	
-#ifdef OK_TO_BREAK
 	if( flags & 0x0100 )
 		in.seekg(8, std::ios::cur);
-#endif
 
 	in.read(m, filenamesize);
 	m[filenamesize] = 0;
