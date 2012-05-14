@@ -25,6 +25,7 @@
 #include "fileblock.h"
 #include <time.h>
 #include <ios>
+#include <cstdlib>
 
 /* MS-DOS time/date conversion routines derived from: */
 
@@ -79,7 +80,19 @@ in(in)
 	char m[filenamesize+1];
 	
 	if( flags & 0x0100 )
-		in.seekg(8, std::ios::cur);
+	{
+		unsigned long high_pack_size = in.get();
+		high_pack_size |= in.get() << 8;
+		high_pack_size |= in.get() << 16;
+		high_pack_size |= in.get() << 24;
+		if( high_pack_size )
+		{
+			std::cerr << "Packed file size >= 4 GiB not "
+				"implemented" << std::endl;
+			std::abort();
+		}
+		in.seekg(4, std::ios::cur);
+	}
 
 	in.read(m, filenamesize);
 	m[filenamesize] = 0;
