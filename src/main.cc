@@ -170,48 +170,68 @@ static int rarfs_read(const char *p, char *buf, size_t size, off_t offset, fuse_
 
 static struct fuse_operations rarfs_oper;
 
+struct Opt
+{
+	Opt();
+	
+	char rarfile[512];
+	bool mount_expected;
+	
+	static const int KEEP = 1;
+	static const int DISCARD = 0;
+};
+
+Opt::Opt() :
+mount_expected(true)
+{
+	rarfile[0] = 0;
+}
+
 static struct fuse_opt rarfs_opts[] = {
 };
 
 static int rarfs_opt_proc(void *data, const char *arg, int key,
                           struct fuse_args *outargs)
 {
-	char *tmp = (char *)data;
+	Opt *param = static_cast<Opt*>(data);
 
 	switch (key) {
 		case FUSE_OPT_KEY_NONOPT:
-			if( tmp[0] == 0 )
+			if( param->rarfile[0] == 0 )
 			{
-				strcpy(tmp, arg);
-				return 0;
+				strcpy(param->rarfile, arg);
+				return Opt::DISCARD;
 			}
+			break;
 	}
 	
-	return 1;
+	return Opt::KEEP;
 }
 
 int main( int argc, char ** argv)
 {
 
 	struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
-	char rarfile[512];
-	rarfile[0] = 0;
+	Opt param;
 	
-	if (fuse_opt_parse(&args, rarfile, rarfs_opts, rarfs_opt_proc) == -1)
+	if (fuse_opt_parse(&args, &param, rarfs_opts, rarfs_opt_proc) == -1)
 		exit(1);
 				
-	if ( ! arc.Init(rarfile) )
+	if ( param.mount_expected )
 	{
-		printf("USAGE: %s <file> <dir>\n", argv[0]);
- 		return -1;
-	}
-	
-	rarfs_oper.getattr = rarfs_getattr;
-	rarfs_oper.readdir = rarfs_readdir;
-	rarfs_oper.open = rarfs_open;
-	rarfs_oper.read = rarfs_read;
+		if ( ! arc.Init(param.rarfile) )
+		{
+			printf("USAGE: %s <file> <dir>\n", argv[0]);
+			return -1;
+		}
+		
+		rarfs_oper.getattr = rarfs_getattr;
+		rarfs_oper.readdir = rarfs_readdir;
+		rarfs_oper.open = rarfs_open;
+		rarfs_oper.read = rarfs_read;
 
-	arc.Parse(false);
+		arc.Parse(false);
+	}
 	
 	return fuse_main(args.argc, args.argv, &rarfs_oper);
 }
