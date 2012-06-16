@@ -32,6 +32,7 @@
 #include <fstream>
 #include "rarblock.h"
 #include "rararchive.h"
+#include "config.h"
 
 RARArchive arc;
 
@@ -180,6 +181,7 @@ struct Opt
 	
 	/* "Key" values for command-line options */
 	static const int KEY_HELP = 0;
+	static const int KEY_VERSION = 1;
 	
 	static const int KEEP = 1;
 	static const int DISCARD = 0;
@@ -194,6 +196,8 @@ mount_expected(true)
 static struct fuse_opt rarfs_opts[] = {
 	FUSE_OPT_KEY("-h", Opt::KEY_HELP),
 	FUSE_OPT_KEY("--help", Opt::KEY_HELP),
+	FUSE_OPT_KEY("-V", Opt::KEY_VERSION),
+	FUSE_OPT_KEY("--version", Opt::KEY_VERSION),
 	FUSE_OPT_END
 };
 
@@ -234,6 +238,11 @@ static int rarfs_opt_proc(void *data, const char *arg, int key,
 			
 			param->mount_expected = false;
 			return Opt::DISCARD;
+			
+		case Opt::KEY_VERSION:
+			fputs(PACKAGE " " VERSION "\n", stderr);
+			param->mount_expected = false;
+			break;
 	}
 	
 	return Opt::KEEP;
