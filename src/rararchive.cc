@@ -91,7 +91,11 @@ RARArchive::Init(std::string filename)
 		
 		voldigits++;
 		if ( voldigits > 5 )
+		{
+			std::cerr << "Too many digits in volume number" <<
+				std::endl;
 			return false;
+		}
 	}
 	
 	offset = numprefix.size() + voldigits + volsuffix.size();

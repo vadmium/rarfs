@@ -266,7 +266,6 @@ int main( int argc, char ** argv)
 	{
 		if ( ! arc.Init(param.rarfile) )
 		{
-			Opt::usage(argv[0]);
 			return -1;
 		}
 		
