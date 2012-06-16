@@ -6,3 +6,7 @@ autoreconf --verbose --install
 ./configure
 make
 make install
+
+To generate a release tarball, run
+
+fakeroot make distcheck
