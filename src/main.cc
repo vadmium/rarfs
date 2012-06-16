@@ -173,9 +173,13 @@ static struct fuse_operations rarfs_oper;
 struct Opt
 {
 	Opt();
+	static void usage(char const* arg0);
 	
 	char rarfile[512];
 	bool mount_expected;
+	
+	/* "Key" values for command-line options */
+	static const int KEY_HELP = 0;
 	
 	static const int KEEP = 1;
 	static const int DISCARD = 0;
@@ -188,6 +192,9 @@ mount_expected(true)
 }
 
 static struct fuse_opt rarfs_opts[] = {
+	FUSE_OPT_KEY("-h", Opt::KEY_HELP),
+	FUSE_OPT_KEY("--help", Opt::KEY_HELP),
+	FUSE_OPT_END
 };
 
 static int rarfs_opt_proc(void *data, const char *arg, int key,
@@ -203,9 +210,38 @@ static int rarfs_opt_proc(void *data, const char *arg, int key,
 				return Opt::DISCARD;
 			}
 			break;
+			
+		case Opt::KEY_HELP:
+			Opt::usage(outargs->argv[0]);
+			putc('\n', stderr);
+			
+			/* Copied from usage() in helper.c in Fuse 2.9.0 */
+			fprintf(stderr,
+			        "general options:\n"
+			        "    -o opt,[opt...]        mount options\n"
+			        "    -h   --help            print help\n"
+			        "    -V   --version         print version\n"
+			        "\n");
+			
+			/* Substitute "help without header" option for fuse_
+			parse_cmdline() */
+			int ret;
+			ret = fuse_opt_add_arg(outargs, "-ho");
+			if( ret < 0 )
+			{
+				return ret;
+			}
+			
+			param->mount_expected = false;
+			return Opt::DISCARD;
 	}
 	
 	return Opt::KEEP;
+}
+
+void Opt::usage(char const* arg0)
+{
+	fprintf(stderr, "USAGE: %s <file> <dir>\n", arg0);
 }
 
 int main( int argc, char ** argv)
@@ -221,7 +257,7 @@ int main( int argc, char ** argv)
 	{
 		if ( ! arc.Init(param.rarfile) )
 		{
-			printf("USAGE: %s <file> <dir>\n", argv[0]);
+			Opt::usage(argv[0]);
 			return -1;
 		}
 		
