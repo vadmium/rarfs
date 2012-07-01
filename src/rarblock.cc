@@ -41,7 +41,11 @@ RARBlock::RARBlock(std::istream &in)
 	headsize = in.get();
 	headsize += in.get() * 256;
 	
-	if ( ( flags & 0x8000 ) != 0 )
+	/* Read 32-bit size field if the block type is known to include the
+	field, or if the flag is set for unknown block types. */
+	if ( FILE == blocktype || SUB_2_00 == blocktype ||
+	RECOVERY_2_00 == blocktype || SUB_3_00 == blocktype ||
+	(blocktype >= UNKNOWN || blocktype < FIRST) && flags & 0x8000 )
 	{
 		size = in.get();
 		size += in.get() * 256;
