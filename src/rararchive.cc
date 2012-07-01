@@ -240,6 +240,10 @@ RARArchive::Parse(bool showcompressed)
 					blocks.push_back( f );
 					
 					break;
+				case RARBlock::SUB_3_00:
+					blocks.push_back(
+						new FileBlock(*file) );
+					break;
 				default:
 					blocks.push_back( new RARBlock(*file) );
 			}
