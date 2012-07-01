@@ -37,6 +37,21 @@ class RARBlock
 
 		void print();
 		bool isBlock();
+		
+		enum {
+			MARKER = 0x72,
+			ARCHIVE = 0x73,
+			FILE = 0x74,
+			COMMENT_1_50 = 0x75,
+			AV_1_50 = 0x76,
+			SUB_2_00 = 0x77,
+			RECOVERY_2_00 = 0x78,
+			AV_2_60 = 0x79,
+			SUB_3_00 = 0x7A,
+			END = 0x7B,
+			
+			FIRST = 0x72, UNKNOWN = 0x7C,
+		};
 	protected:
 
 		unsigned int checksum;

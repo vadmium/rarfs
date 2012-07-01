@@ -76,25 +76,25 @@ RARBlock::print()
 	
 	switch ( blocktype )
 	{
-		case 0x72:
+		case MARKER:
 			std::cout << " Marker Block" << std::endl;
 			break;
-		case 0x73:
+		case ARCHIVE:
 			std::cout << " Archive Header" << std::endl;
 			break;
-		case 0x74:
+		case FILE:
 			std::cout << " File Header" << std::endl;
 			break;
-		case 0x75:
+		case COMMENT_1_50:
 			std::cout << " Comment Header" << std::endl;
 			break;
-		case 0x76:
+		case AV_1_50:
 			std::cout << " Extra Information" << std::endl;
 			break;
-		case 0x77:
+		case SUB_2_00:
 			std::cout << " Sub Block" << std::endl;
 			break;
-		case 0x78:
+		case RECOVERY_2_00:
 			std::cout << " Recovery Record" << std::endl;
 			break;
 		default:
@@ -103,7 +103,7 @@ RARBlock::print()
 	}
 	
 	std::cout << "Flags: 0x" << (std::hex) << flags << std::endl;
-	if( blocktype == 0x74 )
+	if( blocktype == FILE )
 	{
 		std::cout << "\tData in previous file " << (int)(flags & 0x01) << std::endl;
 		std::cout << "\tData in continues file " << (int)(flags & 0x02) << std::endl;

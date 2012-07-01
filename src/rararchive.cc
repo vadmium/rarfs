@@ -211,13 +211,13 @@ RARArchive::Parse(bool showcompressed)
 			{
 				case 0x00:
 					break;
-				case 0x72:
+				case RARBlock::MARKER:
 					blocks.push_back( new MarkerBlock(*file) );
 					break;
-				case 0x73:
+				case RARBlock::ARCHIVE:
 					blocks.push_back( new ArchiveBlock(*file) );
 					break;
-				case 0x74:
+				case RARBlock::FILE:
 					FileBlock *f;
 					f = new FileBlock(*file);
 					
@@ -244,7 +244,8 @@ RARArchive::Parse(bool showcompressed)
 					blocks.push_back( new RARBlock(*file) );
 			}
 		
-			if ( buf[2] == 0 || buf[2] == 0x7B || buf[2] == 0x78 )
+			if ( buf[2] == 0 || buf[2] == RARBlock::END ||
+			buf[2] == RARBlock::RECOVERY_2_00 )
 			{
 				
 				break;
