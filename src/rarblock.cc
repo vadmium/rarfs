@@ -30,6 +30,8 @@
 
 RARBlock::RARBlock(std::istream &in)
 {
+	start = in.tellg();
+	
 	checksum = in.get() * 256;
 	checksum += in.get();
 	
@@ -51,18 +53,22 @@ RARBlock::RARBlock(std::istream &in)
 		size += in.get() * 256;
 		size += in.get() * 256 * 256;
 		size += in.get() * 256 * 256 * 256;
-		in.seekg(headsize - 7 - 4 + size, std::ios::cur);
 	}
 	else
 	{
 		size = 0;
-		in.seekg(headsize - 7, std::ios::cur);
 	}
 }
 
 RARBlock::~RARBlock()
 {
 	
+}
+
+std::streamoff
+RARBlock::GetEndPos()
+{
+	return start + headsize + size;
 }
 
 bool

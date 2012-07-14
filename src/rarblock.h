@@ -34,6 +34,7 @@ class RARBlock
 	public:
 		RARBlock(std::istream &in);
 		 ~RARBlock();
+		virtual std::streamoff GetEndPos();
 
 		void print();
 		bool isBlock();
@@ -54,6 +55,8 @@ class RARBlock
 		};
 	protected:
 
+		std::streamoff start;
+		
 		unsigned int checksum;
 		unsigned int headsize;
 		unsigned int size;

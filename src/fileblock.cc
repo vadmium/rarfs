@@ -54,10 +54,7 @@ time_t date_dos2unix(unsigned short time,unsigned short date)
 FileBlock::FileBlock(std::istream &in) : RARBlock(in),
 in(in)
 {
-	unsigned int end = in.tellg();
-	start = end - size - headsize;
-
-	in.seekg(end + 20-size-headsize);
+	in.seekg(start + 20);
 	unsigned short time;
 	unsigned short date;
 	time = in.get();
@@ -66,7 +63,7 @@ in(in)
 	date += in.get() *256;
 	filedate.tv_sec=date_dos2unix(time,date);
 
-	in.seekg(end + 25-size-headsize);
+	in.seekg(start + 25);
 
 	if ( in.get() == 48 )
 		compressed = false;
@@ -100,8 +97,8 @@ in(in)
 	
 	if ( flags & 0x0400 ) /* Salt field present */
 	{
-		in.seekg(min(in.tellg() + std::streamoff(8),
-			std::streampos(start + headsize)));
+		in.seekg(std::min(std::streamoff(in.tellg()) + 8,
+			start + headsize));
 	}
 	
 	/* Extended time stamp field present */
@@ -110,8 +107,6 @@ in(in)
 	{
 		ParseXtime();
 	}
-	
-	in.seekg(end);
 	
 	if ( ( flags & 0xE0 ) == 0xE0 )
 		folder = true;

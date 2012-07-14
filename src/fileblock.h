@@ -44,7 +44,6 @@ class FileBlock : public RARBlock
 		bool isCompressed();
 	protected:
 		std::string filename;
-		unsigned int start;
 		std::istream &in;
 		bool folder;
 		bool compressed;

@@ -250,6 +250,7 @@ RARArchive::Parse(bool showcompressed)
 			if ( block )
 			{
 				blocks.push_back( block );
+				file->seekg( block->GetEndPos() );
 			}
 		
 			if ( buf[2] == 0 || buf[2] == RARBlock::END ||
