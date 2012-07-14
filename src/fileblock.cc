@@ -190,8 +190,8 @@ FileBlock::GetFileName()
 	return filename;
 }
 
-int
-FileBlock::GetData(char *buf, std::streamoff offset, unsigned int len)
+std::streamsize
+FileBlock::GetData(char *buf, std::streamoff offset, std::streamsize len)
 {
 	std::streampos old = in.tellg();
 

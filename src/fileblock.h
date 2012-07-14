@@ -40,7 +40,7 @@ class FileBlock : public RARBlock
 		std::string GetFileName();
 		void GetFileDate(struct timespec* tp);
 		unsigned long long GetDataSize();
-		int GetData(char *buf, std::streamoff offset, unsigned int len);
+		std::streamsize GetData(char *buf, std::streamoff offset, std::streamsize len);
 		bool isFolder();
 		bool isCompressed();
 	protected:

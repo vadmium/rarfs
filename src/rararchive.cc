@@ -269,7 +269,7 @@ RARArchive::Parse(bool showcompressed)
 unsigned int
 RARArchive::Read(const char *path, char *buf, size_t size, off_t offset)
 {
-	unsigned int pos = 0;
+	size_t pos = 0;
 	if ( fileblocks.find(path) == fileblocks.end() )
 	//	return -ENOENT;
 		return -1;
@@ -279,7 +279,7 @@ RARArchive::Read(const char *path, char *buf, size_t size, off_t offset)
 	{
 		if ( (*i)->GetDataSize() > offset )
 		{	
-			unsigned int len = (*i)->GetData(buf + pos, offset, size);
+			size_t len = (*i)->GetData(buf + pos, offset, size);
 			pos += len;
 			size -= len;
 			offset = 0;
