@@ -35,16 +35,18 @@ class FileBlock : public RARBlock
 	public:
 		FileBlock(std::istream &in);
 		 ~FileBlock();
+		virtual std::streamoff GetEndPos();
 	
 		std::string GetFileName();
 		void GetFileDate(struct timespec* tp);
-		unsigned int GetDataSize();
-		int GetData(char *buf, unsigned int offset, unsigned int len);
+		unsigned long long GetDataSize();
+		int GetData(char *buf, std::streamoff offset, unsigned int len);
 		bool isFolder();
 		bool isCompressed();
 	protected:
 		std::string filename;
 		std::istream &in;
+		unsigned long long size;
 		bool folder;
 		bool compressed;
 		struct timespec filedate;

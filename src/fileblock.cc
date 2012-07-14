@@ -52,7 +52,8 @@ time_t date_dos2unix(unsigned short time,unsigned short date)
 }
 
 FileBlock::FileBlock(std::istream &in) : RARBlock(in),
-in(in)
+in(in),
+size(RARBlock::size)
 {
 	in.seekg(start + 20);
 	unsigned short time;
@@ -82,12 +83,8 @@ in(in)
 		high_pack_size |= in.get() << 8;
 		high_pack_size |= in.get() << 16;
 		high_pack_size |= in.get() << 24;
-		if( high_pack_size )
-		{
-			std::cerr << "Packed file size >= 4 GiB not "
-				"implemented" << std::endl;
-			std::abort();
-		}
+		size |= static_cast <unsigned long long>(high_pack_size) <<
+			32;
 		in.seekg(4, std::ios::cur);
 	}
 
@@ -163,6 +160,12 @@ FileBlock::~FileBlock()
 	
 }
 
+std::streamoff
+FileBlock::GetEndPos()
+{
+	return start + headsize + size;
+}
+
 bool
 FileBlock::isFolder()
 {
@@ -175,7 +178,7 @@ FileBlock::isCompressed()
 	return compressed;
 }
 
-unsigned int
+unsigned long long
 FileBlock::GetDataSize()
 {
 	return size;
@@ -188,11 +191,11 @@ FileBlock::GetFileName()
 }
 
 int
-FileBlock::GetData(char *buf, unsigned int offset, unsigned int len)
+FileBlock::GetData(char *buf, std::streamoff offset, unsigned int len)
 {
 	std::streampos old = in.tellg();
 
-	in.seekg(start + headsize + offset);
+	in.seekg(start + std::streamoff(headsize) + offset);
 	
 	if ( offset > size || !len) 
 		return 0;
