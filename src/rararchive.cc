@@ -207,15 +207,16 @@ RARArchive::Parse(bool showcompressed)
 
 			file->seekg (-3, std::ios::cur);
 			
+			RARBlock* block = 0;
 			switch( buf[2] )
 			{
 				case 0x00:
 					break;
 				case RARBlock::MARKER:
-					blocks.push_back( new MarkerBlock(*file) );
+					block = new MarkerBlock(*file);
 					break;
 				case RARBlock::ARCHIVE:
-					blocks.push_back( new ArchiveBlock(*file) );
+					block = new ArchiveBlock(*file);
 					break;
 				case RARBlock::FILE:
 					FileBlock *f;
@@ -237,15 +238,18 @@ RARArchive::Parse(bool showcompressed)
 						}
 					}
 					
-					blocks.push_back( f );
+					block = f;
 					
 					break;
 				case RARBlock::SUB_3_00:
-					blocks.push_back(
-						new FileBlock(*file) );
+					block = new FileBlock(*file);
 					break;
 				default:
-					blocks.push_back( new RARBlock(*file) );
+					block = new RARBlock(*file);
+			}
+			if ( block )
+			{
+				blocks.push_back( block );
 			}
 		
 			if ( buf[2] == 0 || buf[2] == RARBlock::END ||
